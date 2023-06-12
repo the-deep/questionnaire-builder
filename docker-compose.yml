@@ -1,4 +1,5 @@
-version: '3.8'
+version: '3.2'
+
 services:
   react:
     build: .
@@ -9,3 +10,54 @@ services:
       - .:/code
     ports:
       - '3000:3000'
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: questionnaire_builder
+    volumes:
+      - postgres-data15:/var/lib/postgresql/data
+
+  api:
+    image: ghcr.io/the-deep/questionnaire-builder-backend:${DOCKER_BACKEND_TAG:-latest}
+    build:
+      context: ./backend/
+    environment:
+      APP_ENVIRONMENT: development
+      APP_TYPE: web
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY?err}
+      # To overwrite this values. set the values in .env
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      APP_DOMAIN: localhost:8311
+      APP_HTTP_PROTOCOL: http
+      APP_FRONTEND_HOST: localhost:3111
+      SESSION_COOKIE_DOMAIN: ${SESSION_COOKIE_DOMAIN:-localhost}
+      CSRF_COOKIE_DOMAIN: ${CSRF_COOKIE_DOMAIN:-localhost}
+      DJANGO_ALLOWED_HOST: ${DJANGO_ALLOWED_HOST:-*}
+      DJANGO_DB_NAME: ${DJANGO_DB_NAME:-questionnaire_builder}
+      DJANGO_DB_USER: ${DJANGO_DB_USER:-postgres}
+      DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD:-postgres}
+      DJANGO_DB_PORT: ${DJANGO_DB_PORT:-5432}
+      DJANGO_DB_HOST: ${DJANGO_DB_HOST:-db}
+      DJANGO_CORS_ORIGIN_REGEX_WHITELIST: ${DJANGO_CORS_ORIGIN_REGEX_WHITELIST:-localhost}
+      # EMAIL
+      EMAIL_FROM: ${EMAIL_FROM:-dev@example.com}
+    command: ./scripts/run_develop.sh
+    env_file:
+      # Provide additional environment variables using .env file
+      - .env
+    volumes:
+      - ./backend/:/code
+      - media:/media
+      - ipython_data_local:/root/.ipython/profile_default   # persist ipython data, including ipython history
+    ports:
+      - 8311:8000
+    depends_on:
+        - db
+
+
+volumes:
+  media:
+  postgres-data15:
+  ipython_data_local:

@@ -28,3 +28,6 @@ build-ssr
 .env
 .eslintcache
 tsconfig.tsbuildinfo
+
+# server repo
+questionnaire-builder-backend
