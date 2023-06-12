@@ -44,10 +44,18 @@ const login = myWrapRoute({
     parent: root,
 });
 
+const register = myWrapRoute({
+    title: 'Register',
+    path: 'register',
+    component: () => import('#views/Register'),
+    componentProps: {},
+    parent: root,
+});
 
 export const wrappedRoutes = {
     root,
     login,
+    register,
 };
 
 export const unwrappedRoutes = unwrapRoute(Object.values(wrappedRoutes));
