@@ -30,4 +30,7 @@ build-ssr
 tsconfig.tsbuildinfo
 
 # server repo
-questionnaire-builder-backend
+questionnaire-builder-backend/
+
+# generated graphql schema
+generated/

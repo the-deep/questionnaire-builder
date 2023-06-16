@@ -33,7 +33,7 @@
         }
     }
 
-    .register-form {
+    .fields {
         display: flex;
         flex-direction: column;
         z-index: 1;

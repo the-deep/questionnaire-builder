@@ -2,14 +2,20 @@ version: '3.2'
 
 services:
   react:
+    tty: true
     build: .
-    command: sh -c 'yarn install && yarn dev --host'
     environment:
       APP_TITLE: ${APP_TITLE:-Questionnaire Builder}
-    volumes:
-      - .:/code
+      APP_STATIC_ENDPOINT: ${APP_STATIC_ENDPOINT:-http://localhost:8311}
+      APP_GRAPHQL_ENDPOINT: ${APP_GRAPHQL_ENDPOINT:-http://localhost:8311/graphql/}
+    env_file:
+      - .env
+    command: sh -c 'yarn install && yarn dev --host'
     ports:
       - '3000:3000'
+    volumes:
+      - .:/code
+
   db:
     image: postgres:15-alpine
     environment:
@@ -31,7 +37,7 @@ services:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
       APP_DOMAIN: localhost:8311
       APP_HTTP_PROTOCOL: http
-      APP_FRONTEND_HOST: localhost:3111
+      APP_FRONTEND_HOST: localhost:3000
       SESSION_COOKIE_DOMAIN: ${SESSION_COOKIE_DOMAIN:-localhost}
       CSRF_COOKIE_DOMAIN: ${CSRF_COOKIE_DOMAIN:-localhost}
       DJANGO_ALLOWED_HOST: ${DJANGO_ALLOWED_HOST:-*}
@@ -40,7 +46,6 @@ services:
       DJANGO_DB_PASSWORD: ${DJANGO_DB_PASSWORD:-postgres}
       DJANGO_DB_PORT: ${DJANGO_DB_PORT:-5432}
       DJANGO_DB_HOST: ${DJANGO_DB_HOST:-db}
-      DJANGO_CORS_ORIGIN_REGEX_WHITELIST: ${DJANGO_CORS_ORIGIN_REGEX_WHITELIST:-localhost}
       # EMAIL
       EMAIL_FROM: ${EMAIL_FROM:-dev@example.com}
     command: ./scripts/run_develop.sh
