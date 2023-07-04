@@ -8,7 +8,6 @@ import {
 } from '@apollo/client';
 import { ApolloLink } from 'apollo-link';
 import { RetryLink } from 'apollo-link-retry';
-import { createUploadLink } from 'apollo-upload-client';
 import { isDefined } from '@togglecorp/fujs';
 
 import {
@@ -29,16 +28,9 @@ const link: ApolloLinkFromClient = ApolloLink.from([
             ),
         },
     }),
-    ApolloLink.split(
-        (operation) => operation.getContext().hasUpload,
-        createUploadLink({
-            uri: graphqlEndpoint,
-            credentials: 'include',
-        }) as unknown as ApolloLink,
-        ApolloLink.from([
-            graphqlLink as unknown as ApolloLink,
-        ]),
-    ),
+    ApolloLink.from([
+        graphqlLink as unknown as ApolloLink,
+    ]),
 
 ]) as unknown as ApolloLinkFromClient;
 

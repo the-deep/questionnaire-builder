@@ -1,9 +1,9 @@
 import { useRef, useCallback } from 'react';
 import {
     TextInput,
-    PasswordInput,
     Header,
     Button,
+    ButtonLikeLink,
     useAlert,
 } from '@the-deep/deep-ui';
 import {
@@ -12,6 +12,7 @@ import {
     getErrorObject,
     requiredStringCondition,
     useForm,
+    createSubmitHandler,
     PartialForm,
 } from '@togglecorp/toggle-form';
 import { useMutation, gql } from '@apollo/client';
@@ -59,7 +60,7 @@ const schema: FormSchema = {
             validations: [
                 emailCondition,
             ],
-            requiredCondition: requiredStringCondition,
+            requiredValidation: requiredStringCondition,
         },
         firstName: {
             required: false,
@@ -69,7 +70,7 @@ const schema: FormSchema = {
         },
         captcha: {
             required: true,
-            requiredCondition: requiredStringCondition,
+            requiredValidation: requiredStringCondition,
         },
     }),
 };
@@ -126,25 +127,26 @@ export function Component() {
     );
 
     const handleSubmit = useCallback(() => {
-        elementRef.current?.resetCaptcha();
-        const result = validate();
-
-        if (result.errored) {
-            setError(result.error);
-            return;
-        }
-        const body = result.value;
-        triggerRegister({
-            variables: {
-                input: {
-                    firstName: body.firstName,
-                    lastName: body.lastName,
-                    // TODO: Fix this type error
-                    email: body.email ?? '',
-                    captcha: body.captcha ?? '',
-                },
+        const handler = createSubmitHandler(
+            validate,
+            setError,
+            (val) => {
+                elementRef.current?.resetCaptcha();
+                triggerRegister({
+                    variables: {
+                        input: {
+                            firstName: val.firstName,
+                            lastName: val.lastName,
+                            // TODO: Fix this type error
+                            email: val.email ?? '',
+                            captcha: val.captcha ?? '',
+                        },
+                    },
+                });
             },
-        });
+        );
+
+        handler();
     }, [
         triggerRegister,
         validate,
@@ -193,12 +195,6 @@ export function Component() {
                     onChange={setFieldValue}
                     placeholder="Email"
                 />
-                <PasswordInput
-                    name="password"
-                    type="password"
-                    value=""
-                    placeholder="Password"
-                />
                 <HCaptcha
                     name="captcha"
                     elementRef={elementRef}
@@ -222,6 +218,18 @@ export function Component() {
                 >
                     Register
                 </Button>
+                <div className={styles.footnote}>
+                    Already have an account?
+                    <ButtonLikeLink
+                        className={styles.footnoteButton}
+                        variant="transparent"
+                        to="/login"
+                        spacing="none"
+                    >
+                        Login
+                    </ButtonLikeLink>
+                    now
+                </div>
             </div>
         </div>
     );

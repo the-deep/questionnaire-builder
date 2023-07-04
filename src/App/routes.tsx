@@ -46,9 +46,37 @@ const login = myWrapRoute({
 
 const register = myWrapRoute({
     title: 'Register',
-    path: 'register',
+    path: '/register',
     component: () => import('#views/Register'),
     componentProps: {},
+    parent: root,
+});
+
+const resetPassword = myWrapRoute({
+    title: 'Reset Password',
+    path: '/reset-password',
+    component: () => import('#views/ResetPassword'),
+    componentProps: {},
+    parent: root,
+});
+
+// FIXME: eager load this page
+const resetPasswordRedirect = myWrapRoute({
+    title: 'Reset Password',
+    path: '/permalink/password-reset/:uuid/:token',
+    component: () => import('#redirects/ResetPasswordRedirect'),
+    componentProps: {},
+    parent: root,
+});
+
+const fourHundredFour = myWrapRoute({
+    title: '404',
+    path: '*',
+    component: () => import('#components/FullPageErrorMessage'),
+    componentProps: {
+        errorTitle: '404',
+        errorMessage: 'The page you\'re looking for doesn\'t exist',
+    },
     parent: root,
 });
 
@@ -56,6 +84,9 @@ export const wrappedRoutes = {
     root,
     login,
     register,
+    resetPassword,
+    resetPasswordRedirect,
+    fourHundredFour,
 };
 
 export const unwrappedRoutes = unwrapRoute(Object.values(wrappedRoutes));
