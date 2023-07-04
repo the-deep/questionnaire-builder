@@ -4,6 +4,7 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
+        "initialize": "mkdir -p generated/ && touch generated/types.ts",
         "start": "vite",
         "dev": "vite",
         "build": "vite build",
