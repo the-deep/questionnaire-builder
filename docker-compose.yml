@@ -10,7 +10,7 @@ services:
       APP_GRAPHQL_ENDPOINT: ${APP_GRAPHQL_ENDPOINT:-http://localhost:8311/graphql/}
     env_file:
       - .env
-    command: sh -c 'yarn install && yarn dev --host'
+    command: sh -c 'yarn install && yarn start --host'
     ports:
       - '3000:3000'
     volumes:

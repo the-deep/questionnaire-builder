@@ -13,6 +13,7 @@ env:
 jobs:
   test:
     name: Run tests
+    environment: 'Test'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,6 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: actions/setup-node@v1
         with:
           node-version: '18.x'
@@ -55,7 +58,7 @@ jobs:
         run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Lint
-        run: yarn lint:js
+        run: yarn generate && yarn lint:js
   css-lint:
     name: Lint CSS
     runs-on: ubuntu-latest
@@ -91,10 +94,13 @@ jobs:
         run: yarn generate && yarn typecheck
   build:
     name: Build
+    environment: 'Test'
     needs: [lint, css-lint, typecheck, test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - uses: actions/setup-node@v1
         with:
           node-version: '18.x'
@@ -104,4 +110,4 @@ jobs:
         run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Build
-        run: yarn build
+        run: yarn generate && yarn build
