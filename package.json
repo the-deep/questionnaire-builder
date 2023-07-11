@@ -1,21 +1,21 @@
-{
-    "name": "react-base-app",
-    "private": true,
+{ "name": "react-base-app", "private": true,
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "initialize": "mkdir -p generated/ && touch generated/types.ts",
+        "initialize:type": "mkdir -p generated/ && test -f ./generated/types.ts && true || cp types.stub.ts ./generated/types.ts",
+        "prestart": "yarn initialize:type",
+        "prelint:js": "yarn initialize:type",
+        "prelint:unused": "yarn initialize:type",
+        "prebuild": "yarn initialize:type",
         "start": "vite",
-        "dev": "vite",
         "build": "vite build",
         "generate": "graphql-codegen --config codegen.yml && eslint --fix generated/types.ts",
-        "preview": "vite preview",
-        "check-unused": "unimported",
-        "test": "vitest",
-        "coverage": "vitest run --coverage",
         "typecheck": "tsc",
-        "lint": "eslint src",
-        "css-lint": "stylelint ./src/**/*.css"
+        "lint:js": "eslint src",
+        "lint:css": "stylelint ./src/**/*.css",
+        "lint:unused": "unimported",
+        "test": "vitest",
+        "test:coverage": "vitest run --coverage"
     },
     "dependencies": {
         "@apollo/client": "^3.7.15",

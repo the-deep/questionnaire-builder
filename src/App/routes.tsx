@@ -36,6 +36,13 @@ const root = myWrapRoute({
     errorElement: <PageError />,
 });
 
+const home = myWrapRoute({
+    title: 'Home',
+    index: true,
+    component: () => import('#views/Home'),
+    componentProps: {},
+});
+
 const login = myWrapRoute({
     title: 'Login',
     path: 'login',
@@ -83,6 +90,7 @@ const fourHundredFour = myWrapRoute({
 export const wrappedRoutes = {
     root,
     login,
+    home,
     register,
     resetPassword,
     resetPasswordRedirect,
